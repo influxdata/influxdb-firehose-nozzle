@@ -1,13 +1,12 @@
 ## Summary
-[![Build Status](https://travis-ci.org/cloudfoundry-incubator/influxdb-firehose-nozzle.svg?branch=master)](https://travis-ci.org/cloudfoundry-incubator/influxdb-firehose-nozzle) [![Coverage Status](https://coveralls.io/repos/cloudfoundry-incubator/influxdb-firehose-nozzle/badge.svg)](https://coveralls.io/r/cloudfoundry-incubator/influxdb-firehose-nozzle)
 
-The influxdb-firehose-nozzle is a CF component which forwards metrics from the Loggregator Firehose to [influxdb](http://www.influxdbhq.com/)
+The influxdb-firehose-nozzle is a CF component which forwards metrics from the Loggregator Firehose to [influxdb](http://github.com/influxdata/influxdb)
 
 ### Configure CloudFoundry UAA for Firehose Nozzle
 
-The influxdb firehose nozzle requires a UAA user who is authorized to access the loggregator firehose. You can add a user by editing your CloudFoundry manifest to include the details about this user under the properties.uaa.clients section. For example to add a user `influxdb-firehose-nozzle`:
+The InfluxDB firehose nozzle requires a UAA user who is authorized to access the loggregator firehose. You can add a user by editing your CloudFoundry manifest to include the details about this user under the properties.uaa.clients section. For example to add a user `influxdb-firehose-nozzle`:
 
-```
+```yaml
 properties:
   uaa:
     clients:
@@ -15,14 +14,25 @@ properties:
         access-token-validity: 1209600
         authorized-grant-types: authorization_code,client_credentials,refresh_token
         override: true
-        secret: <password>
-        scope: openid,oauth.approvals,doppler.firehose
+        secret: influxdb-firehose-nozzle
+        scope: openid,oauth.approvals,doppler.firehose,scim.write
         authorities: oauth.login,doppler.firehose
+```
+
+If you are using the `uaac` command line tool to create the user it might look something like:
+
+```
+uaac client \
+  add influxdb-firehose-nozzle \
+  --scope openid,oauth.approvals,doppler.firehose \
+  --authorized_grant_types authorization_code,client_credentials,refresh_token \
+  --authorities oauth.login,doppler.firehose,scim.write \
+  -s influxdb-firehose-nozzle
 ```
 
 ### Running
 
-The influxdb nozzle uses a configuration file to obtain the firehose URL, influxdb API key and other configuration parameters. The firehose and the influxdb servers both require authentication -- the firehose requires a valid username/password and influxdb requires a valid API key.
+The InfluxDB nozzle uses a configuration file to obtain the firehose URL, InfluxDB API credentials and other configuration parameters. The firehose and the InfluxDB servers both require authentication -- the firehose requires a valid CloudFoundry username/client-secret and InfluxDB requires authentication credentials.
 
 You can start the firehose nozzle by executing:
 ```
@@ -47,7 +57,7 @@ If you plan to export HTttpStartStop or ContainerMetrics, you will need to speci
   "org": "myorg"
 }]
 ```
-If you do not have a centralized service for providing this information in your enviornment already, a sample application is included in this repository [for you to use](app-api-example).  
+If you do not have a centralized service for providing this information in your environment already, a sample application is included in this repository [for you to use](app-api-example).  
 
 ### Batching
 
@@ -63,8 +73,6 @@ The nozzle determines the value of `influxdb.nozzle.slowConsumerAlert` with the 
 2. **When the nozzle receives a websocket Close frame with status `1008`, it publishes the value `1`.** Traffic Controller pings clients to determine if the connections are still alive. If it does not receive a Pong response before the KeepAlive deadline, it decides that the connection is too slow (or even dead) and sends the Close frame.
 
 3. **Otherwise, the nozzle publishes `0`.**
-
-
 
 ### Tests
 
@@ -82,34 +90,6 @@ There is a bosh release that will configure, start and monitor the influxdb nozz
 [https://github.com/cloudfoundry-incubator/influxdb-firehose-nozzle-release](https://github.com/cloudfoundry-incubator/influxdb-firehose-nozzle-release
 )
 
-### [Lattice](http://lattice.cf)
-
-There is a docker image which can be used to deploy the influxdb nozzle to lattice.
-If you are running lattice locally with Vagrant, you can use the following command
-line to start the nozzle:
-
-```bash
-ltc create influxdb-nozzle cloudfoundry/influxdb-nozzle-lattice \
-  -e NOZZLE_INFLUXDB_DATABASE=<DATABASE> \
-  -e NOZZLE_INFLUXDB_USER=<USERNAME> \
-  -e NOZZLE_INFLUXDB_PASSWORD=<PASSWORD> \
-  -e NOZZLE_METRICPREFIX=<METRIC PREFIX>  --no-monitor
-```
-
-The `API KEY` is your influxdb API key used to publish metrics. The `METRIC PREFIX` gets prepended to all metric names
-going through the nozzle.
-
-The docker image runs the nozzle with the config provided in [`lattice/lattice-influxdb-firehose-nozzle.json`](https://github.com/cloudfoundry-incubator/influxdb-firehose-nozzle/blob/master/lattice/lattice-influxdb-firehose-nozzle.json).
-If you are not running lattice locally you will have to also configure the traffic controller URL
-
-```bash
-ltc create influxdb-nozzle cloudfoundry/influxdb-nozzle-lattice \
-  -e NOZZLE_INFLUXDB_DATABASE=<DATABASE> \
-  -e NOZZLE_INFLUXDB_USER=<USERNAME> \
-  -e NOZZLE_INFLUXDB_PASSWORD=<PASSWORD> \
-  -e NOZZLE_METRIC_PREFIX=<METRIC PREFIX> \
-  -e NOZZLE_TRAFFICCONTROLLERURL=<TRAFFICONTROLLER URL>
-```
 ### Configuration 
 
 Any of the configuration parameters can be overloaded by using environment variables. The following
@@ -134,7 +114,3 @@ parameters are supported
 | NOZZLE_FLUSHDURATIONSECONDS   | Number of seconds to buffer data before publishing to influxdb |
 | NOZZLE_INSECURESSLSKIPVERIFY  | If true, allows insecure connections to the UAA and the Trafficcontroller |
 | NOZZLE_DISABLEACCESSCONTROL   | If true, disables authentication with the UAA. Used in lattice deployments |
-
-### CI
-The concourse pipeline for the influxdb nozzle is present here: https://concourse.walnut.cf-app.com/pipelines/nozzles?groups=influxdb-nozzle
-

@@ -4,8 +4,9 @@ applications:
   memory: 64M
   disk_quota: 64M
   instances: 1
+  buildpack: https://github.com/cloudfoundry/go-buildpack.git
   env:
-    API_ADDRESS: https://api.cf.company.com
+    API_ADDRESS: https://api.local.pcfdev.io
     CF_USER: admin
     SKIP_SSL: true
-    CF_PASSWORD: secret
+    CF_PASSWORD: admin

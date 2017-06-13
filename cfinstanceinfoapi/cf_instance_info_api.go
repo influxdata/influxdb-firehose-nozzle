@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/evoila/influxdb-firehose-nozzle/nozzleconfig"
+	"github.com/influxdata/influxdb-firehose-nozzle/nozzleconfig"
 )
 
 type AppInfo struct {
@@ -18,7 +18,6 @@ type AppInfo struct {
 }
 
 func UpdateAppMap(config *nozzleconfig.NozzleConfig, appmap map[string]AppInfo) {
-	
 	c := time.Tick(3 * time.Minute)
 	for _ = range c {
 		GenAppMap(config, appmap)

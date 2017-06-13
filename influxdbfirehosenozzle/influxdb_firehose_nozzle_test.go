@@ -1,36 +1,38 @@
 package influxdbfirehosenozzle_test
 
 import (
-        "bytes"
+	"bytes"
+	"strings"
+	"time"
 
-	. "github.com/evoila/influxdb-firehose-nozzle/testhelpers"
+	. "github.com/influxdata/influxdb-firehose-nozzle/testhelpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"encoding/json"
 	"fmt"
 
+	"github.com/cloudfoundry/gosteno"
 	"github.com/cloudfoundry/sonde-go/events"
-        "github.com/cloudfoundry/gosteno"
-	"github.com/evoila/influxdb-firehose-nozzle/influxdbclient"
-	"github.com/evoila/influxdb-firehose-nozzle/influxdbfirehosenozzle"
-	"github.com/evoila/influxdb-firehose-nozzle/nozzleconfig"
-	"github.com/evoila/influxdb-firehose-nozzle/uaatokenfetcher"
 	"github.com/gogo/protobuf/proto"
 	"github.com/gorilla/websocket"
+	"github.com/influxdata/influxdb-firehose-nozzle/influxdbclient"
+	"github.com/influxdata/influxdb-firehose-nozzle/influxdbfirehosenozzle"
+	"github.com/influxdata/influxdb-firehose-nozzle/nozzleconfig"
+	"github.com/influxdata/influxdb-firehose-nozzle/uaatokenfetcher"
 )
 
 var _ = Describe("Datadog Firehose Nozzle", func() {
 	var (
-               fakeUAA *FakeUAA
-	       fakeFirehose *FakeFirehose
-	       influxDbAPI *FakeInfluxDbAPI
-	       config *nozzleconfig.NozzleConfig
-	       nozzle *influxdbfirehosenozzle.InfluxDbFirehoseNozzle
-	       log    *gosteno.Logger
-               logContent     *bytes.Buffer
-               fakeBuffer     *FakeBufferSink
-        )
+		fakeUAA      *FakeUAA
+		fakeFirehose *FakeFirehose
+		influxDbAPI  *FakeInfluxDbAPI
+		config       *nozzleconfig.NozzleConfig
+		nozzle       *influxdbfirehosenozzle.InfluxDbFirehoseNozzle
+		log          *gosteno.Logger
+		logContent   *bytes.Buffer
+		fakeBuffer   *FakeBufferSink
+	)
 
 	BeforeEach(func() {
 		fakeUAA = NewFakeUAA("bearer", "123456789")
@@ -51,7 +53,7 @@ var _ = Describe("Datadog Firehose Nozzle", func() {
 			MetricPrefix:         "datadog.nozzle.",
 			Deployment:           "nozzle-deployment",
 		}
-                content := make([]byte, 1024)
+		content := make([]byte, 1024)
 		logContent = bytes.NewBuffer(content)
 		fakeBuffer = NewFakeBufferSink(logContent)
 		c := &gosteno.Config{
@@ -133,7 +135,7 @@ var _ = Describe("Datadog Firehose Nozzle", func() {
 		var contents []byte
 		Eventually(influxDbAPI.ReceivedContents).Should(Receive(&contents))
 
-		var payload datadogclient.Payload
+		var payload influxdbclient.Payload
 		err := json.Unmarshal(contents, &payload)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -158,7 +160,7 @@ var _ = Describe("Datadog Firehose Nozzle", func() {
 		var contents []byte
 		Eventually(influxDbAPI.ReceivedContents).Should(Receive(&contents))
 
-		var payload datadogclient.Payload
+		var payload influxdbclient.Payload
 		err := json.Unmarshal(contents, &payload)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -199,7 +201,7 @@ var _ = Describe("Datadog Firehose Nozzle", func() {
 			var contents []byte
 			Eventually(influxDbAPI.ReceivedContents).Should(Receive(&contents))
 
-			var payload datadogclient.Payload
+			var payload influxdbclient.Payload
 			err := json.Unmarshal(contents, &payload)
 			Expect(err).ToNot(HaveOccurred())
 
@@ -225,12 +227,12 @@ var _ = Describe("Datadog Firehose Nozzle", func() {
 
 			config = &nozzleconfig.NozzleConfig{
 				FlushDurationSeconds: 1,
-				DataDogURL:           influxDbAPI.URL(),
+				InfluxDbUrl:          influxDbAPI.URL(),
 				TrafficControllerURL: strings.Replace(fakeFirehose.URL(), "http:", "ws:", 1),
 				DisableAccessControl: true,
 			}
 
-			nozzle = datadogfirehosenozzle.NewDatadogFirehoseNozzle(config, tokenFetcher, log)
+			nozzle = influxdbfirehosenozzle.NewInfluxDbFirehoseNozzle(config, tokenFetcher, log)
 		})
 
 		AfterEach(func() {

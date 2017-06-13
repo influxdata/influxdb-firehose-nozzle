@@ -1,0 +1,97 @@
+hash: f01f35222fc1fa8a55e8df9c7ce78e219ac2bed4c63ab0ce4b7556cb94d23dd3
+updated: 2017-06-09T12:04:03.454121917-07:00
+imports:
+- name: github.com/cloudfoundry-community/go-cfclient
+  version: ff512fbd27a850931d695ab8c37176aaa5ceecef
+- name: github.com/cloudfoundry-incubator/uaago
+  version: 5253fdf54e4a464366e5ffa8e5f456f5f1e50a2f
+- name: github.com/cloudfoundry/gosteno
+  version: 0c8581caea35ac903728230e447792e2365dcc34
+  subpackages:
+  - syslog
+- name: github.com/cloudfoundry/noaa
+  version: 086fd462f8fcdde1a234e028e3e157237bdb3383
+  subpackages:
+  - consumer
+  - consumer/internal
+  - errors
+- name: github.com/cloudfoundry/sonde-go
+  version: 5f5bca3bcb61dbf9371b8db82497c6396cc0ea9b
+  subpackages:
+  - events
+- name: github.com/gogo/protobuf
+  version: 100ba4e885062801d56799d78530b73b178a78f3
+  subpackages:
+  - proto
+- name: github.com/golang/protobuf
+  version: df1d3ca07d2d07bba352d5b73c4313b4e2a6203e
+  subpackages:
+  - proto
+- name: github.com/gorilla/websocket
+  version: 3ab3a8b8831546bd18fd182c20687ca853b2bb13
+- name: github.com/pivotal-golang/localip
+  version: eca2e05f8384dd47fd88604af5bcf2321fa6d15e
+- name: github.com/pkg/errors
+  version: bfd5150e4e41705ded2129ec33379de1cb90b513
+- name: golang.org/x/net
+  version: 7dbad50ab5b31073856416cdcfeb2796d682f844
+  subpackages:
+  - context
+- name: golang.org/x/oauth2
+  version: 2baa8a1b9338cf13d9eeb27696d761155fa480be
+  subpackages:
+  - clientcredentials
+  - internal
+- name: google.golang.org/appengine
+  version: 4f7eeb5305a4ba1966344836ba4af9996b7b4e05
+  subpackages:
+  - internal
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+testImports:
+- name: github.com/onsi/ginkgo
+  version: 77a8c1e5c40d6bb6c5eb4dd4bdce9763564f6298
+  subpackages:
+  - config
+  - internal/codelocation
+  - internal/containernode
+  - internal/failer
+  - internal/leafnodes
+  - internal/remote
+  - internal/spec
+  - internal/spec_iterator
+  - internal/specrunner
+  - internal/suite
+  - internal/testingtproxy
+  - internal/writer
+  - reporters
+  - reporters/stenographer
+  - reporters/stenographer/support/go-colorable
+  - reporters/stenographer/support/go-isatty
+  - types
+- name: github.com/onsi/gomega
+  version: 334b8f472b3af5d541c5642701c1e29e2126f486
+  subpackages:
+  - format
+  - gbytes
+  - gexec
+  - internal/assertion
+  - internal/asyncassertion
+  - internal/oraclematcher
+  - internal/testingtsupport
+  - matchers
+  - matchers/support/goraph/bipartitegraph
+  - matchers/support/goraph/edge
+  - matchers/support/goraph/node
+  - matchers/support/goraph/util
+  - types
+- name: golang.org/x/sys
+  version: a60af9cbbc6ab800af4f2be864a31f423a0ae1f2
+  subpackages:
+  - unix
+- name: gopkg.in/yaml.v2
+  version: a83829b6f1293c91addabc89d0571c246397bbf4

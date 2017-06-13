@@ -1,0 +1,3 @@
+package: github.com/influxdata/influxdb-firehose-nozzle/app-api-example
+import:
+- package: github.com/cloudfoundry-community/go-cfclient

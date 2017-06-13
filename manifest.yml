@@ -4,5 +4,6 @@ applications:
   memory: 256M
   instances: 1
   host: influxdb-firehose-nozzle
-  domain: evoila.rocks
+  domain: local.pcfdev.io
   buildpack: https://github.com/cloudfoundry/go-buildpack.git
+        
